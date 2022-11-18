@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "tough-dreamer-276121",
+  "private_key_id": "660c545f283a694c348414bd1e45c05ec3127821",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDpfbH1AT4zIshH\nAbebyVf/I/E1wy5t28ZEY52FpQDt24Le7YF2I1POXWDHZqdH0Zn+XOg0XTnKauAf\ncnK/p4zIKZF/kzIF9HXUnL45yv73UqZGiSNLhUR8W8sXZ540HZt3h41pOhPQAFlA\ng0kfxOtUiI8/NnTLLfv8OjCAddqJrF6PxNfalUsh0yTufGBso1Gbg8yh5UrpYH1I\nUG6BOggaSrkJ6jzy7smyQho9zDi7yyJYFdoGZDoiU0c+BA4CC+uj+Jts1Ii5eAgp\nYL3T1dXxQNNBhWFVXOIHGOrfOnfJvdKdV1hDcK4SZ7yWQXuJmOECLmWMC6so40II\nzmlTGMxLAgMBAAECggEAJfxjBT8MhXk1KAgpfNjGziVkyqBUX18P5HRoXiO4APpj\nUi1FkJiyu7IJWqdis5Zv/SfURyCblEjK6ZLPBEsX5kCNATpLOxjISqytbe2OiWIS\n1wrciR7HQ4wTgF1FKalfb5TH9sSSEJbd7lbtgJOizX/h/iC34445npFA7sU9poPq\n2WfvWrGNmtNPiEfCNf6Xp3MLETO1AcoSeUKMzqcAFt8GuJ0ejUCLcGfoWVzXALii\nCH29TAEN4CSgcXLgQo2DTpPF97onJ5pRKVmbhSh5fdZxTAuxT3XPLVcRQrX9Zkt2\n0gYw1I4ueGsYANotIUZQKQLGv/wmwMQyrtoyWtjz0QKBgQD1B34i4/s/xozPV3MX\nDDZbhwNiFH4hHD0NR3mIJzrPGeCJZjJ9b3wzlGkWfLeTaAD1VY+FQwp14LGNjPIb\ngIx1sj4HpqUOef9dnrM1oHMX7r/gx0KcRNS7AB8lle7mQrlp2ZGa5QiU5/LROZL+\nWAtb9ikpMcog+2lanfRoNikspQKBgQDz8fOcvuAl2uSBx3VewH8S1/p5JRUvuFHF\nfyh8Y2noVFQnfA5l5bhkcKbQiIgIEaxuxYsjZ1V+4qJV5vdNeKrgBT9Xnacf7SDE\n9hUXq0tXJCsCpiDVmqlR1ZqstHKz85640/qvtoA6bhSs1wjpu/Z1jWoiNfp/vCv6\npgpVH+4SLwKBgQCjCKc+496K4rtSQmeLkE6iu8Tef7Akq7tbmJEerKuOnTMveNZj\na8iCMV9y3OzwoaTxmEp0atUM9cJt4rg84F2U+lIXmSP96+KkEjI/nlC2Pd9h2nNR\nsuKwwjX3NjnM79yat28QVxBMs8B2wg4yObblK3bbuAs7wsyoxKyYomDnGQKBgA3O\nSqg7UTozOi1yGV1kbYymdoF2rM1HlDEmMidgBPVmGGEnrzTrHFVq3rX8lB5IycZ3\nHZnCVl9Y+jD8YlCbHKiTA3O082lmJS2gc68kPZ5P6LM8ra0JFL4R5bASgk9W4Uu6\ni3x4SqeD5V2mydVYkukyOKh4/5VNE/wae4k3xmR3AoGBAJt9nvtIfwlYg1T7044x\nNf8tZzUERHGFfuZCI3Pf5mkUGyWXVwKzn43ST91n1kYi67a8xxRTKvBab+DS9Hji\n6mU1UqOEAekLv1/dwVEPjZt6znFlP3mjc2XTfsdUKEprqsZJFhmIfgkgbDuZxXHs\nEtVZ0j2o0on/nQjnHk3tW8oN\n-----END PRIVATE KEY-----\n",
+  "client_email": "datasphere@tough-dreamer-276121.iam.gserviceaccount.com",
+  "client_id": "102492789993081002897",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/datasphere%40tough-dreamer-276121.iam.gserviceaccount.com"
+}
