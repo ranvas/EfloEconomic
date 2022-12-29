@@ -18,7 +18,7 @@ namespace MoneyEntity.Logic.GoogleSheets
         [Display(Name = "ресурс шахты")]
         public string? Resourse { get; set; }
         [Display(Name = "выработка")]
-        public string? Value { get; set; }
+        public string? MaxCapacity { get; set; }
         [Display(Name = "активная")]
         public string? Active { get; set; }
     }

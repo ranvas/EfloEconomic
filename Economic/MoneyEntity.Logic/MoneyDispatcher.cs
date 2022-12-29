@@ -23,6 +23,5 @@ namespace MoneyEntity.Logic
                 result.ToBotString() : 
                 (result?.ErrorText ?? "Ошибка обработки запроса");
         }
-
     }
 }

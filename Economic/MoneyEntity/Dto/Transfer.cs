@@ -8,10 +8,9 @@ namespace MoneyEntity.Dto
 {
     public class Transfer : MoneyEntityBase
     {
-        public long AccountFromId { get; set; }
+        public long? AccountFromId { get; set; }
         public Account? AccountFrom { get; set; }
-        public long AccountToId { get; set; }
-        public Account? AccountTo { get; set; }
+        public string? Comment { get; set; }
         public string? CurrencyCode { get; set; }
         public string? TransferTime { get; set; }
         public decimal CurrencyValue { get; set; }

@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace MoneyEntity.Logic.Primitives
 {
-    public enum CurrencyCodes
+    public enum MineActivity
     {
-        Credit,
-        Ore,
-        Metall,
-        Unknown
+        ACTIVE, READY, HIDE, UNKNOWN
     }
 }

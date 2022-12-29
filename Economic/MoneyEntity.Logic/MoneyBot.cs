@@ -1,4 +1,5 @@
-﻿using Integrators.Abstractions;
+﻿using Google.Apis.Sheets.v4.Data;
+using Integrators.Abstractions;
 using Integrators.Dispatcher;
 using Microsoft.Extensions.Hosting;
 using MoneyEntity.Logic.Commands;
@@ -11,18 +12,21 @@ using System.Threading.Tasks;
 using Telegram.Bot.Requests.Abstractions;
 using Telegram.Bot.Types;
 using TgBot.DataSphere;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace MoneyEntity.Logic
 {
     public class MoneyBot : BotServiceBase, IHostedService
     {
         MoneyDispatcher _dispatcher;
-        public Dictionary<string, string> _commands = new();
+        public Dictionary<string, (string, bool)> _commands = new();
+        private const string IsAdminCommand = "isAdmin";
+
         public MoneyBot(string token, MoneyDispatcher dispatcher)
             : base(token)
         {
             _dispatcher = dispatcher;
-            AddCommand("/get_status", "Информация о профайле", nameof(MoneyManager.GetStatus));
+            AddCommand("/status", "Информация о профайле", nameof(MoneyManager.GetStatus));
             AddCommand("/send_credits"
                 , "Отправить кредиты на кошелек другого пользователя. Формат: '/send_credits X Y', где X-код кошелька получателя, Y - количество кредитов для отправки'"
                 , nameof(MoneyManager.SendCredits));
@@ -32,9 +36,23 @@ namespace MoneyEntity.Logic
             AddCommand("/send_metalls"
                 , "Отправить металлы на кошелек другого пользователя. Формат: '/send_metalls X Y', где X-код кошелька получателя, Y - количество металлов для отправки'"
                 , nameof(MoneyManager.SendMetalls));
-            AddCommand("/get_mines"
+            AddCommand("/mines"
                 , "Список шахт"
                 , nameof(MoneyManager.GetMines));
+            AddCommand("/bid"
+                , "сделать ставку"
+                , nameof(MoneyManager.DoBid));
+
+            AddCommand("/admin_start"
+                , "Стартовать цикл"
+                , nameof(MoneyManager.StartCycle), true);
+            AddCommand("/admin_stop"
+                , "Остановить цикл"
+                , nameof(MoneyManager.StopCycle), true);
+            AddCommand("/admin_pay"
+                , "Остановить цикл"
+                , nameof(MoneyManager.StopCycle), true);
+            _dispatcher.RegisterService<MoneyManager>(IsAdminCommand, typeof(MoneyCommandRequest), nameof(MoneyManager.GetRole));
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -52,7 +70,7 @@ namespace MoneyEntity.Logic
         {
             var tgId = GetChatId(executionContext);
             string? response;
-            if (_commands.ContainsKey(command))
+            try
             {
                 var request = new MoneyCommandRequest
                 {
@@ -60,37 +78,54 @@ namespace MoneyEntity.Logic
                     Username = GetUserName(executionContext),
                     Params = param ?? string.Empty
                 };
-                try
+                if (_commands.ContainsKey(command))
                 {
                     response = await _dispatcher.DispatchSpecified(command, request);
                 }
-                catch(Exception e)
+                else
                 {
-                    Console.WriteLine(e.ToString());
-                    response = "Ошибка";
+                    response = await GetHelp(request);
                 }
             }
-            else
+            catch (Exception e)
             {
-                response = GetHelp();
+                Console.WriteLine(e.ToString());
+                response = "Ошибка";
             }
             await SendTextMessage(chatId: tgId, text: response ?? "Пустой ответ");
         }
 
-        private void AddCommand(string command, string description, string methodName)
+        private void AddCommand(string command, string description, string methodName, bool isHidden = false)
         {
-            _commands.Add(command, description);
+            _commands.Add(command, (description, isHidden));
             _dispatcher.RegisterService<MoneyManager>(command, typeof(MoneyCommandRequest), methodName);
         }
 
-        public string GetHelp()
+        public async Task<string> GetHelp(MoneyCommandRequest request)
         {
             var sb = new StringBuilder();
             sb.AppendLine("Список доступных комманд:");
-            foreach (var item in _commands)
+            foreach (var item in _commands.Where(c => !c.Value.Item2))
             {
-                sb.AppendLine($"<b>{item.Key}</b> : {item.Value}");
+                sb.AppendLine($"<b>{item.Key}</b> : {item.Value.Item1}");
             }
+            try
+            {
+                var role = await _dispatcher.DispatchSpecified(IsAdminCommand, request);
+                if(role == "admin")
+                {
+                    sb.AppendLine("Админские комманды:");
+                    foreach (var item in _commands.Where(c => c.Value.Item2))
+                    {
+                        sb.AppendLine($"<b>{item.Key}</b> : {item.Value.Item1}");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
             return sb.ToString();
         }
 

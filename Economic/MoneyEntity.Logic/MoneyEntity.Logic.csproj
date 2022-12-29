@@ -9,11 +9,11 @@
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
 	</ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SGA\core60\RevolutionMatter\GoogleSheet\GoogleSheet.Core\GoogleSheet.Core.csproj" />
-    <ProjectReference Include="..\..\..\SGA\core60\RevolutionMatter\Integrators\Integrators.Abstractions\Integrators.Abstractions.csproj" />
-    <ProjectReference Include="..\..\..\SGA\core60\RevolutionMatter\Integrators\Integrators.Core\Integrators.Core.csproj" />
-    <ProjectReference Include="..\..\..\SGA\core60\RevolutionMatter\Integrators\Integrators.Dispatcher\Integrators.Dispatcher.csproj" />
-    <ProjectReference Include="..\..\..\SGA\core60\RevolutionMatter\Telegram\TgBot.DataSphere\TgBot.DataSphere.csproj" />
+    <ProjectReference Include="..\..\..\Sga\GoogleSheet\GoogleSheet.Core\GoogleSheet.Core.csproj" />
+    <ProjectReference Include="..\..\..\Sga\Integrators\Integrators.Abstractions\Integrators.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Sga\Integrators\Integrators.Core\Integrators.Core.csproj" />
+    <ProjectReference Include="..\..\..\Sga\Integrators\Integrators.Dispatcher\Integrators.Dispatcher.csproj" />
+    <ProjectReference Include="..\..\..\Sga\Telegram\TgBot.DataSphere\TgBot.DataSphere.csproj" />
     <ProjectReference Include="..\MoneyEntity\MoneyEntity.csproj" />
     <ProjectReference Include="..\SqlLiteDataAccess\SqlLiteDataAccess.csproj" />
   </ItemGroup>

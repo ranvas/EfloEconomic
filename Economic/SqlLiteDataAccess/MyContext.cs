@@ -30,6 +30,7 @@ namespace SqlLiteDataAccess
         {
             modelBuilder.ApplyConfiguration(new AccountMap());
             modelBuilder.ApplyConfiguration(new TransferMap());
+            modelBuilder.ApplyConfiguration(new BidMap());
         }
     }
 }

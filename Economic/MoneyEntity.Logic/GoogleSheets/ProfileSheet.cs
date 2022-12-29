@@ -23,5 +23,7 @@ namespace MoneyEntity.Logic.GoogleSheets
         public string? StartMetall { get; set; }
         [Display(Name = "Видит шахты")]
         public string? CanSeeMines { get; set; }
+        [Display(Name = "Админ")]
+        public string? IsAdminString { get; set; }
     }
 }

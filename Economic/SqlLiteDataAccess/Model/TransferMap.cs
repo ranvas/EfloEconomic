@@ -20,8 +20,8 @@ namespace SqlLiteDataAccess.Model
             builder.Property(x => x.CurrencyValue).HasColumnName("currency_value");
             builder.Property(x => x.TransferTime).HasColumnName("transfer_time");
             builder.Property(x => x.CurrencyCode).HasColumnName("transfer_code");
-            builder.Property(x=>x.AccountFromId).HasColumnName("account_from_id");
-            builder.Property(x => x.AccountToId).HasColumnName("account_to_id");
+            builder.Property(x => x.AccountFromId).HasColumnName("account_from_id");
+            builder.Property(x => x.Comment).HasColumnName("comment");
         }
     }
 }

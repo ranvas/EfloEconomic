@@ -1,13 +1,15 @@
-﻿using Google.Apis.Sheets.v4.Data;
-using MoneyEntity.Dto;
-using MoneyEntity.Logic.Commands;
+﻿using MoneyEntity.Dto;
 using MoneyEntity.Logic.GoogleSheets;
 using MoneyEntity.Logic.Primitives;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace MoneyEntity.Logic
+namespace MoneyEntity.Logic.Entities
 {
-    public class Profile : MoneyCommandResponse
+    public class Profile
     {
         public Profile()
         {
@@ -109,32 +111,8 @@ namespace MoneyEntity.Logic
             }
         }
 
-        public bool CanSeeMines
-        {
-            get
-            {
-                if (bool.TryParse(ProfileSheet?.CanSeeMines, out bool result))
-                {
-                    return result;
-                }
-                return false;
-            }
-        }
+        public bool IsAdmin => bool.TryParse(ProfileSheet?.IsAdminString, out bool result) ? result : false;
 
-        public override string ToBotString()
-        {
-            if (ProfileSheet == null)
-                return "Ошибка инициализации персонажа, код ошибки: GD";
-            var sb = new StringBuilder();
-            sb.AppendLine($"<b>Профайл для @{ProfileSheet.TgName}:</b>");
-            sb.AppendLine($"Имя персонажа: {ProfileSheet.CharacterName}");
-            sb.AppendLine($"Код кошелька: {ProfileSheet.WalletCode}");
-            sb.AppendLine($"ID персонажа: {Account?.Id ?? 0}(для отладки, убрать)");
-            sb.AppendLine($"Количество кредитов: {CurrentCredits}");
-            sb.AppendLine($"Количество руды: {CurrentOres}");
-            sb.AppendLine($"Количество металла: {CurrentMetalls}");
-            sb.AppendLine($"Видит шахты: {CanSeeMines}");
-            return sb.ToString();
-        }
+        public bool CanSeeMines => bool.TryParse(ProfileSheet?.CanSeeMines, out bool result) ? result : false;
     }
 }

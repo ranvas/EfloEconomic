@@ -5,7 +5,7 @@ using Integrators.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using MoneyEntity.Dto;
 using MoneyEntity.Logic.Commands;
-using MoneyEntity.Logic.Dto;
+using MoneyEntity.Logic.Entities;
 using MoneyEntity.Logic.GoogleSheets;
 using MoneyEntity.Logic.Primitives;
 using SqlLiteDataAccess;
@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types.ReplyMarkups;
 using TgBot.DataSphere;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace MoneyEntity.Logic
 {
@@ -38,24 +39,90 @@ namespace MoneyEntity.Logic
             _googleManager = new();
         }
 
-        public async Task<Profile> GetStatus(MoneyCommandRequest command)
+        public async Task<ProfileResponse> GetStatus(MoneyCommandRequest command)
         {
             var profile = await GetProfile(command.TgId, command.Username);
+            var result = new ProfileResponse(profile);
             if (profile == null)
-                return new Profile().ReturnError($"Персонаж для {command.Username} не найден");
-            profile.IsSuccess = true;
-            return profile;
+                return result.ReturnError($"Персонаж для {command.Username} не найден");
+
+            result.IsSuccess = true;
+            return result;
+        }
+
+        public async Task<MoneyCommandResponse> StartCycle(MoneyCommandRequest request)
+        {
+            var profile = await CheckAdmin(request);
+            if (profile == null)
+                return new MoneyEmptyResponse().ReturnError("Ошибка проверки прав");
+
+            return new MoneyEmptyResponse { IsSuccess = true };
+        }
+
+        public async Task<GetRoleResponse> GetRole(MoneyCommandRequest request)
+        {
+            var profile = await CheckAdmin(request);
+            if (profile == null)
+                return new GetRoleResponse().ReturnError("user");
+
+            return new GetRoleResponse { IsSuccess = true };
+        }
+
+        public async Task<MoneyEmptyResponse> StopCycle(MoneyCommandRequest request)
+        {
+            var profile = await CheckAdmin(request);
+            if (profile == null)
+                return new MoneyEmptyResponse().ReturnError("Ошибка проверки прав");
+
+            return new MoneyEmptyResponse { IsSuccess = true };
+        }
+
+        public async Task<MoneyEmptyResponse> PayCycle(MoneyCommandRequest request)
+        {
+            var profile = await CheckAdmin(request);
+            if (profile == null)
+                return new MoneyEmptyResponse().ReturnError("Ошибка проверки прав");
+
+            return new MoneyEmptyResponse { IsSuccess = true };
+        }
+
+        public async Task<MoneyEmptyResponse> DoBid(MoneyCommandRequest request)
+        {
+            var profile = await GetProfile(request.TgId, request.Username);
+            
+            
+            await CreateNewTransfer(profile, null, 1, CurrencyCodes.Credit);
+            var db = GetDb();
+            var random = new Random();
+            if(random.Next(1,3) == 1)
+            {
+                var bid = new Bid { AccountId = profile?.Account?.Id ?? 0, MineId = 145, Value = 1 };
+                await db.AddItem(bid);
+            }
+            else
+            {
+                var bid = new Bid { AccountId = profile?.Account?.Id ?? 0, MineId = 245, Value = 1 };
+                await db.AddItem(bid);
+            }
+            return new MoneyEmptyResponse { IsSuccess = true };
         }
 
         public async Task<MineResponse> GetMines(MoneyCommandRequest command)
         {
             var result = new MineResponse();
+            var db = GetDb();
             var profile = await GetProfile(command.TgId, command.Username);
             if (profile == null)
                 return result.ReturnError($"Персонаж для {command.Username} не найден");
             if (!profile.CanSeeMines)
                 return result.ReturnError($"У {profile.ProfileSheet?.CharacterName} нет доступа для просмотра шахт");
-            result.Mines = await _googleManager.MineSheet.GetAllItems();
+            var mines = (await _googleManager.MineSheet.GetAllItems()).Select(m => new Mine(m));
+            result.Mines = mines.ToList();
+            foreach (var mine in result.Mines)
+            {
+                mine.Bids = db.GetList<Bid>(m=>m.MineId == mine.Id).ToList();
+            }
+            
             result.IsSuccess = true;
             return result;
         }
@@ -115,34 +182,36 @@ namespace MoneyEntity.Logic
                 result : result.ReturnError("ошибка при отправке");
         }
 
-        private async Task<bool> CreateNewTransfer(Profile from, Profile to, decimal value, CurrencyCodes currencyCode)
+        private async Task<bool> CreateNewTransfer(Profile? from, Profile? to, decimal value, CurrencyCodes currencyCode)
         {
             var db = GetDb();
-            var newTransferFrom = new Transfer
-            {
-                AccountFromId = from.Account!.Id,
-                AccountToId = to.Account!.Id,
-                CurrencyValue = -value,
-                CurrencyCode = currencyCode.ToString()
-            };
-
-            var newTransferTo = new Transfer
-            {
-                AccountFromId = to.Account!.Id,
-                AccountToId = from.Account!.Id,
-                CurrencyValue = value,
-                CurrencyCode = currencyCode.ToString()
-            };
-
-            await db.AddItem(newTransferFrom);
-            await db.AddItem(newTransferTo);
-            from.AllTransfers.Add(newTransferFrom);
-            to.AllTransfers.Add(newTransferTo);
-
             var key = "profiles";
-            _memoryCacheService.UpdateOrCreateCacheAsync($"{key}_{from.TgId}", from, true, ProfileCacheTime);
-            _memoryCacheService.UpdateOrCreateCacheAsync($"{key}_{to.TgId}", to, true, ProfileCacheTime);
-
+            if (from != null)
+            {
+                var newTransferFrom = new Transfer
+                {
+                    AccountFromId = from.Account?.Id,
+                    Comment = $"перевод в пользу {to?.Account?.Id.ToString() ?? "неизвестный"}",
+                    CurrencyValue = -value,
+                    CurrencyCode = currencyCode.ToString()
+                };
+                await db.AddItem(newTransferFrom);
+                from.AllTransfers.Add(newTransferFrom);
+                _memoryCacheService.UpdateOrCreateCacheAsync($"{key}_{from.TgId}", from, true, ProfileCacheTime);
+            }
+            if (to != null)
+            {
+                var newTransferTo = new Transfer
+                {
+                    AccountFromId = to.Account!.Id,
+                    Comment = $"перевод от {from?.Account?.Id.ToString() ?? "неизвестного"}",
+                    CurrencyValue = value,
+                    CurrencyCode = currencyCode.ToString()
+                };
+                await db.AddItem(newTransferTo);
+                to.AllTransfers.Add(newTransferTo);
+                _memoryCacheService.UpdateOrCreateCacheAsync($"{key}_{to.TgId}", to, true, ProfileCacheTime);
+            }
             return true;
         }
 
@@ -180,7 +249,7 @@ namespace MoneyEntity.Logic
         {
             var db = GetDb();
             profile.Account = await db.GetOrAddAccount(profile.TgId, profile.ProfileSheet?.TgName, profile.ProfileSheet?.WalletCode);
-            profile.AllTransfers = (await db.GetListAsync<Transfer>(t => t.AccountFromId == profile.Account.Id)).ToList(); 
+            profile.AllTransfers = (await db.GetListAsync<Transfer>(t => t.AccountFromId == profile.Account.Id)).ToList();
             return profile;
         }
 
@@ -196,5 +265,12 @@ namespace MoneyEntity.Logic
             };
         }
 
+        private async Task<Profile?> CheckAdmin(MoneyCommandRequest request)
+        {
+            var profile = await GetProfile(request.TgId, request.Username);
+            if (!profile?.IsAdmin ?? false)
+                return null;
+            return profile;
+        }
     }
 }

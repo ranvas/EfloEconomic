@@ -13,5 +13,6 @@ namespace MoneyEntity.Dto
         public string? WalletCode { get; set; }
         public List<Transfer>? TransfersFrom { get; set; }
         public List<Transfer>? TransfersTo { get; set; }
+        public List<Bid>? Bids { get; set; }
     }
 }

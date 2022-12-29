@@ -19,18 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SGA\core60\RevolutionMatter\DataAccess\DataAccess.SqlLite\DataAccess.SqlLite.csproj" />
+    <ProjectReference Include="..\..\..\Sga\DataAccess\DataAccess.SqlLite\DataAccess.SqlLite.csproj" />
     <ProjectReference Include="..\MoneyEntity\MoneyEntity.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Money.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

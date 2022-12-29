@@ -21,7 +21,6 @@ namespace SqlLiteDataAccess.Model
             builder.Property(x => x.TgName).HasColumnName("telegram_name");
             builder.Property(x => x.TgId).HasColumnName("telegram_id");
             builder.HasMany(x => x.TransfersFrom).WithOne(t => t.AccountFrom).HasForeignKey(t => t.AccountFromId);
-            builder.HasMany(x => x.TransfersTo).WithOne(t => t.AccountTo).HasForeignKey(t => t.AccountToId);
         }
     }
 }
